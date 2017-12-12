@@ -147,6 +147,7 @@ public class BannerTest implements ActionListener{
 					P=-1; //다시 1번째 사진으로 이동
 				}
 				System.out.println("잘했당");
+				System.out.println("test");
 			
 			}
 			
