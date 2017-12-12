@@ -146,6 +146,7 @@ public class BannerTest implements ActionListener{
 				if(P==4) {//5번째 사진이 선택되어 있다면
 					P=-1; //다시 1번째 사진으로 이동
 				}
+				System.out.println("잘했당");
 			
 			}
 			
