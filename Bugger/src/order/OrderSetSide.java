@@ -41,11 +41,11 @@ import javax.swing.event.ChangeEvent;
 public class OrderSetSide extends JFrame implements MouseListener{
 
 	private JPanel contentPane;
-	private JLabel[] lblSide;
-	private JLabel[] lblBeverage;
+	private JLabel[] lblSide; //사이드 이름 배열
+	private JLabel[] lblBeverage; //음료 이름 배열
 	private CardLayout card=new CardLayout();
-	private String stBever, stSide;
-	private int iBever, ISide, spiNum=1, no, result=0;
+	private String stBever, stSide;  //음료 이름, 사이드 이름
+	private int iBever, ISide, no, result=0; //음료 가격, 사이드 가격, 테이블에 붙일 번호, DB 결과 값
 	private Vector<OrderVO> vec=new Vector<>();
 	private OrderDAO dao=new OrderDAO();
 	private OrderVO vo=new OrderVO();
@@ -169,6 +169,10 @@ public class OrderSetSide extends JFrame implements MouseListener{
 		JLabel lblnull10 = new JLabel("  ");
 		panel_6.add(lblnull10, BorderLayout.EAST);
 		setSize(620,560);
+		
+		sideSet s=new sideSet();
+		s.start();
+		
 	}
 	private int[] a=new int[10];
 	private int[] b=new int[10];
@@ -182,19 +186,19 @@ public class OrderSetSide extends JFrame implements MouseListener{
 		int[] iBeverage= {500, 0, 500, 0, 500, 0, 700, 200, 0, 0};
 		
 		for(int i=0; i<lblBeverage.length; i++) {
-			if(obj==lblBeverage[i]) {
-				no=vec.size()+1;
-				stBever=sBeverage[i];
-				iBever=iBeverage[i];
+			if(obj==lblBeverage[i]) {//해당 음료가 선택 되었다면
+				no=vec.size()+1; //해당 음료 번호
+				stBever=sBeverage[i]; //해당 음료 이름
+				iBever=iBeverage[i]; //해당 음료 가격
 				
-				update(no,stBever,iBever,1, i, a, stBever);
+				update(no,stBever,iBever,1, i, a); //번호, 이름, 가격, 개수, 배열의 위치, 선택 구분
 			}else {//if
-				
+				stBever="";
+				iBever=0;
 			}
 			
 		}//for
 		
-	
 		
 		//사이드
 		String[] sSide= {"감자 튀김","양파 튀김","오징어 튀김","치즈스틱","치킨 너겟","","","","",""};
@@ -206,28 +210,25 @@ public class OrderSetSide extends JFrame implements MouseListener{
 				stSide=sSide[i];
 				ISide=iSide[i];
 				
-				update(no, stSide, ISide, 1, i, b, stSide);
+				update(no, stSide, ISide, 1, i, b);
 			}
-		}
-		
-		if(vo.getMenu()!=null) {
-			
 		}
 	}
 	
-	public void update(int no, String menu, int price, int num, int i, int[] ab, String menu2) {
+	public void update(int no, String menu, int price, int num, int i, int[] ab) {
 		vec=dao.selectAll();
 		
-		if(ab[i]==0 && !menu2.equals("")) {
+		if(ab[i]==0 && !menu.equals("")) {//해당 음료가 테이블에 존재하지 않은 음료라면
 			vo.setNo(no);
 			vo.setMenu(menu);
 			vo.setNum(num);
 			vo.setPrice(price);
 			
-			dao.insert(vo);
-			ab[i]=1;
-		}else if(ab[i]==1 && !menu2.equals("")){
-			JOptionPane.showMessageDialog(contentPane, "음료수의 개수 변경은 밑의 버튼을 조작해 주세요.");
+			dao.insert(vo); //DB에 저장
+			ab[i]=1; //테이블에 존재한다는 표시
+			
+		}else if(ab[i]==1 && !menu.equals("")){
+			JOptionPane.showMessageDialog(contentPane, "음료수나 사이드 메뉴의 개수는 밑의 버튼으로 변경해 주세요.");
 		}else {
 			JOptionPane.showMessageDialog(contentPane, "해당 메뉴는 준비 중 입니다.");
 		}
@@ -244,5 +245,39 @@ public class OrderSetSide extends JFrame implements MouseListener{
 	@Override
 	public void mouseReleased(java.awt.event.MouseEvent e) {}
 	
-
+	//음료수 선택 표시 초기화
+	class sideSet extends Thread {
+		String[] sBeverage= {"콜라L","콜라M","사이다L","사이다M","환타L","환타M","아메리카노L","아메리카노M","",""};
+		String[] sSide= {"감자 튀김","양파 튀김","오징어 튀김","치즈스틱","치킨 너겟","","","","",""};
+		
+		public void run() {
+			try {
+			
+			while(true) {
+				vec=dao.selectAll();
+				
+				for(int i=0; i<sSide.length; i++) { 
+					if(a[i]==1 || b[i]==1) { //만약 한번이라도 선택 되었다는 표시가 있다면
+						for(OrderVO list : vec) {
+							if(sBeverage[i].equals(list.getMenu())) { //DB와 비교해서 존재하는지 확인
+								a[i]=1;
+								break;
+							}else if(sSide[i].equals(list.getMenu())) {
+								b[i]=1;
+								break;
+							}else { //존재하지 않는다면 테이블에 없다고 표시
+								a[i]=0; b[i]=0;
+							}
+						}
+					}
+				}
+				
+				sleep(150);
+					
+			}//while
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 }

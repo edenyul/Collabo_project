@@ -91,6 +91,10 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener{
 	private Vector<OrderVO> vec=new Vector<>();
 	private Vector<String> str=new Vector<>();
 	private int result=0;
+	
+	private int[] a=new int[6]; //테이블 번호
+	private int[] b=new int[6]; //선택 메뉴의 개수
+	private int[] set=new int[6];
 
 
 	/**
@@ -165,7 +169,7 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener{
 					
 					int row=table.getSelectedRow(); //선택한 테이블의 행의 값을 저장
 					
-					result=dao.updateNum(spi1, row+1); //데이터 베이스의 값을 스피너와 동일하게 변경
+					result=dao.updateNum( spi1, row+1); //데이터 베이스의 값을 스피너와 동일하게 변경
 					model.setValueAt(spi1, row, 3); //테이블도 스피너와 동일한 값을 가지도록 변경
 					
 				}
@@ -500,7 +504,7 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener{
 		panel_4.add(pset, "Pset");
 		pset.setBackground(Color.ORANGE);
 		pset.setLayout(new GridLayout(0, 3, 5, 5));
-		//panel_4.add(side.getContentPane(),"Pside"); //OrderSetSide의 화면과 번갈아 보일 수 있도록 설정
+		panel_4.add(side.getContentPane(),"Pside"); //OrderSetSide의 화면과 번갈아 보일 수 있도록 설정
 		
 		
 		lblset1 = new JLabel("");
@@ -563,14 +567,60 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener{
 	public void actionPerformed(ActionEvent e) {
 		Object obj=e.getSource();
 		
-		
+		if(obj==btnckdel) { //선택 취소
+			int row=table.getSelectedRow(); //선택한 테이블의 열
+			String mm=String.valueOf(model.getValueAt(row, 1));
+			
+			//테이블의 시작 : 0 , DB의 시작 : 1
+			result=dao.delete(row+1); //선택한 해당 번호와 일치하는 DB내용 삭제
+			model.removeRow(row);
+			
+			vec=dao.selectAll(); //번호를 바꾸기 위해 전체 검색
+			
+			String[] str=new String[vec.size()]; //번호를 바꾸기 위한 기준점을 저장할 배열
+			int k=0; //str배열의 번호
+			for(OrderVO list : vec) { 
+				str[k]=list.getMenu(); //전체검색으로 나오는 모든 메뉴들을 배열에 저장
+				k++; //배열번호 증가
+			}
+			
+			for(int i=row; i<vec.size(); i++) { //삭제한 번호를 기준으로 DB의 끝까지
+				dao.updateNo(i+1, str[i]); //DB의 번호를 차례로 바꿔나가기
+			}
+			
+			refresh(); //바뀐내용을 갱신
+			
+			System.out.println(mm);
+			////////////////////////////////////
+			for(int i=0; i<6; i++) {
+				if(mm.equals("햄버거 세트"+(i+1))) {
+					set[i]=0;
+					b[i]=0;
+					a[i]=0;
+					System.out.println("햄버거 세트"+(i+1));
+				}
+			}
+			
+		}else if(obj==btnAlldel) { //전체 취소
+			dao.deleteAll(); //데이터 베이스 정보 전체 삭제
+			refresh(); // 테이블 정보 전체 초기화
+			change("Pset"); //햄버거 선택화면으로 돌아가기
+			spinner.setEnabled(false); //스피너 선택 창 다시 비활성화
+			spinner.setValue(1); //스피너가 1의 값을 가지도록 설정
+			
+			for(int i=0; i<a.length; i++) { //햄버거 정보 값들 초기화
+				a[i]=0;
+				b[i]=0;
+				set[i]=0;
+			}//for
+			
+			
+		}//else if
 		
 		
 		
 	}
-	private int[] a=new int[6]; //테이블 번호
-	private int[] b=new int[6]; //선택 메뉴의 개수
-	private int[] set=new int[6];
+	
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
@@ -611,6 +661,7 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener{
 		
 	}
 	
+	//사용하지 않는 메소드들
 	@Override
 	public void mouseEntered(MouseEvent e) {}
 	@Override
@@ -638,7 +689,7 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener{
 			set[num]=1; //해당 햄버거가 이미 한번 선택되었다고 알리는 수
 			
 		}else { //어느 햄버거가 한번 이상 클릭 되었다면
-			b[num]+=1; //해당 햄버거의 개수에 +1;
+			b[num]=vec.get(a[num]-1).getNum()+1; //해당 햄버거의 개수에 +1;
 			if(b[num]>10) { //만약 햄버거의 선택 개수가 10을 초과했을 시
 				JOptionPane.showMessageDialog(contentPane, "같은 메뉴의 최대 주문 개수는 10개 입니다.");
 				
@@ -651,8 +702,7 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener{
 	
 	/////////////////////////////////////////////
 	
-	
-	
+
 	//////////////테이블 DB관련 란////////////////////
 	
 	//테이블 계속 갱신
@@ -706,8 +756,6 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener{
 		}//run
 	}//thread class
 
-	
-	
 	//테이블 다시 출력
 	public void refresh() {
 		Vector<Object> obj;

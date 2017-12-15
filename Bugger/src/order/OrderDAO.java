@@ -133,9 +133,30 @@ public class OrderDAO {
 		String sql="update hambugertbl set num=? where no=?";
 		try {
 			prmt=con.prepareStatement(sql);
-		
+			
 			prmt.setInt(1, num);
 			prmt.setInt(2, no);
+			
+			result=prmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally {
+			close(con, prmt);
+		}
+		
+		return result;
+	}
+	public int updateNo(int no, String what) {
+		Connection con=getCon();
+		PreparedStatement prmt=null;
+		int result=0; 
+		
+		String sql="update hambugertbl set no=? where menu=?";
+		try {
+			prmt=con.prepareStatement(sql);
+			
+			prmt.setInt(1, no);
+			prmt.setString(2, what);
 			
 			result=prmt.executeUpdate();
 		} catch (SQLException e) {
