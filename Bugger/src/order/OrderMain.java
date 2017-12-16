@@ -42,6 +42,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.lang.ref.Reference;
 import java.util.ArrayList;
 import java.util.Vector;
 
@@ -163,16 +164,17 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener{
 		
 		spinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
+				
 				if(spinner.isEnabled()) { //스피너가 활성화 되어 있다면
 					
 					spi1=(int) spinner.getValue(); //변하는 스피너의 값을 저장
 					
 					int row=table.getSelectedRow(); //선택한 테이블의 행의 값을 저장
 					
-					result=dao.updateNum( spi1, row+1); //데이터 베이스의 값을 스피너와 동일하게 변경
-					model.setValueAt(spi1, row, 3); //테이블도 스피너와 동일한 값을 가지도록 변경
+					result=dao.updateNum(spi1, row+1); //데이터 베이스의 값을 스피너와 동일하게 변경
+					model.setValueAt(spi1, row, 3); //테이블도 스피너와 동일한 값을 가지도록 변경	
 					
-				}
+				}//스피너 활성화 여부 if
 				
 			}
 		});
@@ -588,18 +590,19 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener{
 				dao.updateNo(i+1, str[i]); //DB의 번호를 차례로 바꿔나가기
 			}
 			
+			sideNum();
 			refresh(); //바뀐내용을 갱신
 			
-			System.out.println(mm);
 			////////////////////////////////////
 			for(int i=0; i<6; i++) {
 				if(mm.equals("햄버거 세트"+(i+1))) {
 					set[i]=0;
 					b[i]=0;
 					a[i]=0;
-					System.out.println("햄버거 세트"+(i+1));
+					mm="";
 				}
 			}
+			
 			
 		}else if(obj==btnAlldel) { //전체 취소
 			dao.deleteAll(); //데이터 베이스 정보 전체 삭제
@@ -722,7 +725,8 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener{
 				///////////////////////////// 테이블에 내용 붙이기 //////////////////////////////
 				
 					if(model.getRowCount()>dbNum) {
-						System.out.println("테이블의 개수가 크다");
+						//refresh();
+						System.out.println("테이블 개수가 크다");
 					}else if(model.getRowCount()==dbNum) {
 						
 					}else if(model.getRowCount()<dbNum) { //만약 DB보다 테이블의 개수가 적다면
@@ -746,8 +750,12 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener{
 					
 					txtNum.setText(Nsum+""); //총 개수 정보를 텍스트 필드에 보여주기
 					txtSum.setText(sum+""); //총 가격 정보를 텍스트 필드에 보여주기 
+						
+				/////////////////////////////////////////////////////////////////////////////
 					
-					sleep(150);
+				sideNum();
+				
+				sleep(100);
 			}//while
 			} catch (InterruptedException e) {
 				e.printStackTrace();
@@ -760,6 +768,8 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener{
 	public void refresh() {
 		Vector<Object> obj;
 		vec=dao.selectAll();
+		
+		table.removeAll();
 		
 		String columnNames[]= {"번호","메뉴","가격","개수"};
 		model = new DefaultTableModel(columnNames, 0);
@@ -776,6 +786,7 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener{
 			obj.addElement(list.getNum());
 			
 			model.addRow(obj);
+		
 		}
 	
 		//테이블을 가운데 정렬시키기 위한 소스코드
@@ -787,5 +798,117 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener{
 		}
 		
 	}//refresh();
+
+	int H;
+	
+	//선택된 세트의 개수보다 많은 음료나 사이드를 선택하지 못하게 만듦
+   //햄버거 세트 선택 개수보다 음료나 사이드의 개수를 더 많이 선택하면 가격을 더 받기
+	public void sideNum() {
+		int row=table.getSelectedRow();
+		
+		vec=dao.selectAll();
+		String[] sBeverage= {"(S)콜라L","(S)콜라M","(S)사이다L","(S)사이다M","(S)환타L","(S)환타M","(S)아메리카노L","(S)아메리카노M","",""};
+		String[] sSide= {"(S)감자 튀김","(S)양파 튀김","(S)오징어 튀김","(S)치즈스틱","(S)치킨 너겟","","","","",""};
+		
+		int B=0, S=0; //음료 총 개수, 사이드 총 개수, 세트 총 개수
+		H=0;
+		for(OrderVO list : vec) {
+			for(int i=0; i<10; i++) {
+				if(list.getMenu().equals(sBeverage[i])) {//세트 음료 개수
+					B+=list.getNum();
+					break;
+				}else if(list.getMenu().equals(sSide[i])) {//세트 사이드 메뉴 개수
+					S+=list.getNum();
+					break;
+				}else if(list.getMenu().indexOf("세트")!=-1) {//세트 햄버거 개수
+					H+=list.getNum();
+					break;
+				}
+			}
+		}
+		
+		//////////// 사이드 메뉴 //////////////////
+		if(H<S) {
+			if(H==0){
+				for(OrderVO list : vec) {
+					for(int i=0; i<vec.size(); i++) {
+						if(vec.get(i).getMenu().indexOf("S")!=-1) {
+							dao.delete(i+1);
+						}
+					}
+				}
+				change("Pset");
+				
+			//테이블의 마지막에 있는 메뉴의 개수-1=0 이하가 아니고 && 테이블의 마지막에 있는 메뉴에 "세트"라는 글자가 없을 시
+			}else if(vec.get(vec.size()-1).getNum()-1<=0 && vec.get(vec.size()-1).getMenu().indexOf("세트")==-1) {
+				for(String list : sSide) {
+					if(vec.get(vec.size()-1).getMenu().equals(list)) { //테이블 마지막 메뉴가 사이드 메뉴라면
+						dao.delete(vec.size()); //DB에서 삭제
+						model.removeRow(vec.size()-1); //테이블에서 삭제
+						break;
+					}else {
+						if(spi1-1<=0) { //선택되어 있는 메뉴의 개수-1=0이하라면
+							dao.delete(vec.size()); //DB에서 삭제
+							model.removeRow(vec.size()-1); //테이블에서 삭제
+						}else { 
+							result=dao.updateNum(spi1-1, row+1); //DB에 저장되어 있는 개수-1
+							model.setValueAt(spi1-1, row, 3); //테이블에 보여지고 있는 수-1
+							spinner.setValue(spi1-1); //스피너의 개수-1
+						}
+						break;
+					}
+				}
+				JOptionPane.showMessageDialog(contentPane, "세트의 개수보다 사이드 메뉴를 더 많이 선택할 수 없습니다.");
+				
+			}else {
+				dao.updateNum(spi1-1, row+1);
+				model.setValueAt(spi1-1, row, 3);
+				spinner.setValue(spi1-1);
+				JOptionPane.showMessageDialog(contentPane, "세트의 개수보다 사이드 메뉴를 더 많이 선택할 수 없습니다.");
+			}
+			
+		///////////// 음료 //////////////////////
+		}else if(H<B) {
+			if(H==0){
+				for(OrderVO list : vec) {
+					for(int i=0; i<vec.size(); i++) {
+						if(vec.get(i).getMenu().indexOf("S")!=-1) {
+							dao.delete(i+1);
+						}
+					}
+				}
+				change("Pset");
+				
+			}else if(vec.get(vec.size()-1).getNum()-1<=0 && vec.get(vec.size()-1).getMenu().indexOf("세트")==-1) {
+				for(String list : sBeverage) {
+					if(vec.get(vec.size()-1).getMenu().equals(list)) {
+						dao.delete(vec.size());
+						model.removeRow(vec.size()-1);
+						break;
+					}else {
+						if(spi1-1<=0) {
+							dao.delete(vec.size());
+							model.removeRow(vec.size()-1);
+						}else {
+							result=dao.updateNum(spi1-1, row+1);
+							model.setValueAt(spi1-1, row, 3);
+							spinner.setValue(spi1-1);
+						}
+						break;
+					}
+				}
+				JOptionPane.showMessageDialog(contentPane, "세트의 개수보다 음료를 더 많이 선택할 수 없습니다.");
+				
+			}else {
+				dao.updateNum(spi1-1, row+1);
+				model.setValueAt(spi1-1, row, 3);
+				spinner.setValue(spi1-1);
+				JOptionPane.showMessageDialog(contentPane, "세트의 개수보다 음료를 더 많이 선택할 수 없습니다.");
+			}
+			
+		}//if
+		
+	}//sideNum
+	
 	
 }

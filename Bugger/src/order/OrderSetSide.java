@@ -154,7 +154,7 @@ public class OrderSetSide extends JFrame implements MouseListener{
 		
 		lblSide=new JLabel[10];
 		for(int i=0; i<lblSide.length; i++) {
-			lblSide[i]=new JLabel("햄버거"+i);
+			lblSide[i]=new JLabel("사이드"+i);
 			panel_8.add(lblSide[i]);
 			lblSide[i].addMouseListener(this);
 			//lblSide[i].setIcon(new ImageIcon(OrderSetSide.class.getSimpleName("//"+name+".jpg")));
@@ -182,7 +182,7 @@ public class OrderSetSide extends JFrame implements MouseListener{
 		vec=dao.selectAll();
 		
 		//음료
-		String[] sBeverage= {"콜라L","콜라M","사이다L","사이다M","환타L","환타M","아메리카노L","아메리카노M","",""};
+		String[] sBeverage= {"(S)콜라L","(S)콜라M","(S)사이다L","(S)사이다M","(S)환타L","(S)환타M","(S)아메리카노L","(S)아메리카노M","",""};
 		int[] iBeverage= {500, 0, 500, 0, 500, 0, 700, 200, 0, 0};
 		
 		for(int i=0; i<lblBeverage.length; i++) {
@@ -201,7 +201,7 @@ public class OrderSetSide extends JFrame implements MouseListener{
 		
 		
 		//사이드
-		String[] sSide= {"감자 튀김","양파 튀김","오징어 튀김","치즈스틱","치킨 너겟","","","","",""};
+		String[] sSide= {"(S)감자 튀김","(S)양파 튀김","(S)오징어 튀김","(S)치즈스틱","(S)치킨 너겟","","","","",""};
 		int[] iSide= {0, 500, 500, 700, 700, 0, 0, 0, 0, 0};
 		
 		for(int i=0; i<lblSide.length; i++) {
@@ -247,8 +247,8 @@ public class OrderSetSide extends JFrame implements MouseListener{
 	
 	//음료수 선택 표시 초기화
 	class sideSet extends Thread {
-		String[] sBeverage= {"콜라L","콜라M","사이다L","사이다M","환타L","환타M","아메리카노L","아메리카노M","",""};
-		String[] sSide= {"감자 튀김","양파 튀김","오징어 튀김","치즈스틱","치킨 너겟","","","","",""};
+		String[] sBeverage= {"(S)콜라L","(S)콜라M","(S)사이다L","(S)사이다M","(S)환타L","(S)환타M","(S)아메리카노L","(S)아메리카노M","",""};
+		String[] sSide= {"(S)감자 튀김","(S)양파 튀김","(S)오징어 튀김","(S)치즈스틱","(S)치킨 너겟","","","","",""};
 		
 		public void run() {
 			try {
