@@ -2,11 +2,8 @@ package order;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
-import java.awt.TextArea;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -18,22 +15,16 @@ import javax.swing.table.TableColumnModel;
 
 import javax.swing.JLabel;
 import javax.swing.JTabbedPane;
-import java.awt.Button;
 import java.awt.CardLayout;
 
 import javax.swing.JButton;
 import javax.swing.JTable;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import javax.swing.JTextPane;
 import java.awt.Font;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
-import javax.swing.JInternalFrame;
-import java.awt.ScrollPane;
-import javax.swing.JDesktopPane;
-import javax.swing.JSplitPane;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.JRadioButton;
 import javax.swing.JCheckBox;
 import java.awt.Color;
@@ -41,25 +32,12 @@ import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.lang.ref.Reference;
-import java.util.ArrayList;
 import java.util.Vector;
 
-import javax.swing.JScrollBar;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.BoxLayout;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
-import javax.swing.AbstractListModel;
-import javax.swing.JTextArea;
-import javax.swing.UIManager;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeListener;
-import javax.swing.plaf.basic.BasicComboBoxUI.ComboBoxLayoutManager;
 import javax.swing.event.ChangeEvent;
 import java.beans.VetoableChangeListener;
 import java.beans.PropertyChangeEvent;
@@ -74,7 +52,7 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener{
 	private JTextField textField;
 	public JPanel panel_4;
 	private JLabel lblset1, lblset2, lblset3, lblset4, lblset5, lblset6;
-	private int num=0; //테이블 개수 수량  체크
+	//private int num=0; //테이블 개수 수량  체크
 
 	private CardLayout card=new CardLayout(); //카드 레이아웃
 	//시그니처 라디오박스 : 번
@@ -92,7 +70,7 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener{
 	private OrderDAO dao=new OrderDAO();
 	private OrderVO vo=new OrderVO();
 	private Vector<OrderVO> vec=new Vector<>();
-	private Vector<String> str=new Vector<>();
+	//private Vector<String> str=new Vector<>();
 	private int result=0;
 	
 	private int[] a=new int[6]; //테이블 번호
@@ -191,11 +169,6 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener{
 		panel_16.setLayout(new BorderLayout(0, 0));
 		
 		scrollPane = new JScrollPane();
-		scrollPane.addVetoableChangeListener(new VetoableChangeListener() {
-			public void vetoableChange(PropertyChangeEvent arg0) {
-				System.out.println("aa??");
-			}
-		});
 		panel_16.add(scrollPane, BorderLayout.CENTER);
 		
 		/////////////////////테이블 클릭/////////////////////
@@ -495,6 +468,9 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener{
 		model=new DefaultTableModel(columnNames,0);
 		table.setModel(model); //=> 사용함을 선언함
 		
+		table.getTableHeader().setReorderingAllowed(false); //컬럼 이동 방지
+		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); //다중 선택 방지
+		
 		DefaultTableCellRenderer render=new DefaultTableCellRenderer();
 		render.setHorizontalAlignment(SwingConstants.CENTER);
 		TableColumnModel colum=table.getColumnModel();
@@ -743,8 +719,6 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener{
 	//테이블 계속 갱신
 	class table extends Thread {
 		public void run() {
-			int minus=0; //차이 계산
-			int plus=1;  //돌릴 숫자
 		
 			try {
 		
@@ -793,7 +767,6 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener{
 							dao.updateNo(i+1, vec.get(i).getMenu());
 						}
 						
-						System.out.println("작동 중!!");
 						refresh();
 					}
 					
@@ -810,11 +783,6 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener{
 					
 				//////////////////////////////////////////////////////////////////////////////
 				sideNum();
-				
-				for(int i=0; i<a.length; i++) {
-					System.out.print(a[i]+" ");
-				}
-				System.out.println();
 				
 				sleep(100);
 			}//while
@@ -848,6 +816,9 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener{
 			model.addRow(obj);
 		}
 	
+		table.getTableHeader().setReorderingAllowed(false); //컬럼 이동 방지
+		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); //다중 선택 방지
+		
 		//테이블을 가운데 정렬시키기 위한 소스코드
 		DefaultTableCellRenderer render=new DefaultTableCellRenderer();
 		render.setHorizontalAlignment(SwingConstants.CENTER);
