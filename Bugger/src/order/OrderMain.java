@@ -554,6 +554,7 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener{
 		
 		if(obj==btnckdel) { //선택 취소
 			int row=table.getSelectedRow(); //선택한 테이블의 열
+			row2=row;
 			String mm=String.valueOf(model.getValueAt(row, 1));
 			
 			//테이블의 시작 : 0 , DB의 시작 : 1
@@ -782,6 +783,13 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener{
 					}
 					
 				//////////////////////////////////////////////////////////////////////////////
+				
+					if(table.getSelectedRow()==-1) {
+						spinner.setValue(1);
+						spinner.setEnabled(false);
+					}
+					
+				/////////////////////////////////////////	
 				sideNum();
 				
 				sleep(100);
@@ -829,8 +837,7 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener{
 		
 	}//refresh();
 
-	
-	
+	private int row2, B2, S2;
 	//선택된 세트의 개수보다 많은 음료나 사이드를 선택하지 못하게 만듦
    //햄버거 세트 선택 개수보다 음료나 사이드의 개수를 더 많이 선택하면 가격을 더 받기
 	public void sideNum() {
@@ -846,9 +853,11 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener{
 			for(int i=0; i<10; i++) {
 				if(list.getMenu().equals(sBeverage[i])) {//세트 음료 개수
 					B+=list.getNum();
+					B2+=1;
 					break;
 				}else if(list.getMenu().equals(sSide[i])) {//세트 사이드 메뉴 개수
 					S+=list.getNum();
+					S2+=1;
 					break;
 				}else if(list.getMenu().indexOf("세트")!=-1) {//세트 햄버거 개수
 					H+=list.getNum();
@@ -864,45 +873,50 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener{
 		///////////// 음료 //////////////////////
 		}else if(H<B && H!=0) {
 			side(sBeverage, row, "음료");
-			
 		}//if
 		
 	}//sideNum
 	
-	public void side(String[] BS, int row, String sBS) {
-		vec=dao.selectAll();
-		
-		//테이블의 마지막에 있는 메뉴의 개수-1=0 이하 이고 && 테이블의 마지막에 있는 메뉴가 세트가 아니라면
-		if(vec.get(vec.size()-1).getNum()-1<=0 && vec.get(vec.size()-1).getMenu().indexOf("세트")==-1) {
-			for(String list : BS) {
-				vec=dao.selectAll();
-				if(vec.get(vec.size()-1).getMenu().equals(list)) { //테이블 마지막 메뉴가 사이드 메뉴라면
-					dao.delete(vec.get(vec.size()-1).getNo()); //DB에서 삭제
-					model.removeRow(vec.size()-1); //테이블에서 삭제
-					break;
-				}
-			}
-			
-		}else if(vec.get(vec.size()-1).getNum()-1>0 && vec.get(vec.size()-1).getMenu().indexOf("세트")==-1){
-			if(row!=-1) {
-				dao.updateNum(spi1-1, row+1);
-				model.setValueAt(spi1-1, row, 3);
-				spinner.setValue(spi1-1);
-			}else {
-				dao.delete(vec.get(vec.size()-1).getNo()); //DB에서 삭제
-				model.removeRow(vec.size()-1); //테이블에서 삭제
-				
-			}
+  public void side(String[] BS, int row, String sBS) {
+	 int conform=0;
+	 
+	 for(String list : BS) {
+		 String me=vec.get(vec.size()-1).getMenu();
+		 if(me.indexOf("세트")==-1 && me.equals(list)) {
+			conform=1;
+			break;
+		 }else if(me.indexOf("세트")==-1 && !me.equals(list)){
+			conform=2;
+		 }else {
+			conform=3;
+		 }
+	 }
+	 
+	 vec=dao.selectAll();
+	 System.out.print(vec.size()+" ");
+	 if(conform==1) {
+		 try {
+			 dao.delete(vec.size());
+			 model.removeRow(vec.size()-1);			 
+		 }catch(ArrayIndexOutOfBoundsException e){
+			 model.removeRow(vec.size()-2);	
+		 }
+	 }else if(conform==2) {
+		result=dao.updateNum(spi1-1, row+1);
+		model.setValueAt(spi1-1, row, 3);
+		spinner.setValue(spi1-1);
+	 }else {
+		if(row!=-1) {
+			result=dao.updateNum(spi1-1, row+1);
+			model.setValueAt(spi1-1, row, 3);
+			spinner.setValue(spi1-1);
 		}else {
-			for(int i=0; i<vec.size(); i++) {
-				if(vec.get(i).getMenu().indexOf("S")!=-1) { //테이블 마지막 메뉴가 사이드 메뉴라면
-					dao.delete(vec.get(i).getNo()); //DB에서 삭제
-					model.removeRow(i); //테이블에서 삭제
-					break;
-				}
+			for(int i=1; i<=vec.size(); i++) {
+				dao.updateNum(1, i);
 			}
 		}
-	
-		JOptionPane.showMessageDialog(contentPane, "세트의 개수보다 "+sBS+"를 더 많이 선택할 수 없습니다.");
-	}//side
+	}
+	 
+  	}
+
 }
