@@ -40,6 +40,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 import java.beans.VetoableChangeListener;
+import java.lang.ref.Reference;
 import java.beans.PropertyChangeEvent;
 
 public class OrderMain extends JFrame implements ActionListener, MouseListener{
@@ -793,12 +794,15 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener{
 				sideNum();
 				
 				sleep(100);
+					
 			}//while
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}//catch
 		
+		
 		}//run
+	
 	}//thread class
 
 	//테이블 다시 출력
@@ -869,7 +873,6 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener{
 		//////////// 사이드 메뉴 //////////////////
 		if(H<S && H!=0) {	
 			side(sSide, row, "사이드 메뉴");
-			
 		///////////// 음료 //////////////////////
 		}else if(H<B && H!=0) {
 			side(sBeverage, row, "음료");
@@ -877,46 +880,68 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener{
 		
 	}//sideNum
 	
-  public void side(String[] BS, int row, String sBS) {
-	 int conform=0;
-	 
-	 for(String list : BS) {
-		 String me=vec.get(vec.size()-1).getMenu();
-		 if(me.indexOf("세트")==-1 && me.equals(list)) {
-			conform=1;
-			break;
-		 }else if(me.indexOf("세트")==-1 && !me.equals(list)){
-			conform=2;
-		 }else {
-			conform=3;
+	public void side(String[] BS, int row, String sBS) {
+		 int conform=0;
+		 
+		 for(String list : BS) {
+			 String me=vec.get(vec.size()-1).getMenu();
+			 if(me.indexOf("세트")==-1 && me.equals(list)) {
+				conform=1;
+				break;
+			 }else if(me.indexOf("세트")==-1 && !me.equals(list)){
+				conform=2;
+			 }else {
+				conform=3;
+			 }
 		 }
-	 }
-	 
-	 vec=dao.selectAll();
-	 System.out.print(vec.size()+" ");
-	 if(conform==1) {
-		 try {
-			 dao.delete(vec.size());
-			 model.removeRow(vec.size()-1);			 
-		 }catch(ArrayIndexOutOfBoundsException e){
-			 model.removeRow(vec.size()-2);	
-		 }
-	 }else if(conform==2) {
-		result=dao.updateNum(spi1-1, row+1);
-		model.setValueAt(spi1-1, row, 3);
-		spinner.setValue(spi1-1);
-	 }else {
-		if(row!=-1) {
-			result=dao.updateNum(spi1-1, row+1);
-			model.setValueAt(spi1-1, row, 3);
-			spinner.setValue(spi1-1);
-		}else {
-			for(int i=1; i<=vec.size(); i++) {
-				dao.updateNum(1, i);
+		 
+		 vec=dao.selectAll();
+		
+		 if(conform==1) {
+			 try {
+				 dao.delete(vec.get(vec.size()-1).getNo());
+				 model.removeRow(vec.size()-1);	
+				 
+				 if(vec.size()!=vec.get(vec.size()-1).getNo()) {
+					dao.delete(vec.get(vec.size()-1).getNo());
+				}
+			 }catch(ArrayIndexOutOfBoundsException e){
+				 model.removeRow(vec.size()-2);	
+			 }
+		 }else if(conform==2) {
+			if(spi1-1>0) {
+				try {
+					result=dao.updateNum(spi1-1, row+1);
+					model.setValueAt(spi1-1, row, 3);
+					spinner.setValue(spi1-1);
+				}catch(ArrayIndexOutOfBoundsException e) {
+					for(int i=1; i<=vec.size(); i++) {
+						dao.updateNum(1, i);
+					}
+					refresh();
+				}
+			}else {
+				try {
+					 dao.delete(vec.get(vec.size()).getNo());
+					 model.removeRow(vec.size()-1);			 
+				 }catch(ArrayIndexOutOfBoundsException e){
+					 model.removeRow(vec.size()-2);	
+				 }
 			}
-		}
-	}
-	 
-  	}
+		 }else {
+			if(row!=-1) {
+				result=dao.updateNum(spi1-1, row+1);
+				model.setValueAt(spi1-1, row, 3);
+				spinner.setValue(spi1-1);
+				refresh();
+			}else {
+				for(int i=1; i<=vec.size(); i++) {
+					dao.updateNum(1, i);
+				}
+				refresh();
+			}
+		 }//eles
+	
+	}//side
 
 }
