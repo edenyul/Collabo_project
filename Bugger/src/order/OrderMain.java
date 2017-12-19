@@ -156,9 +156,10 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener, 
 					
 					int row=table.getSelectedRow(); //선택한 테이블의 행의 값을 저장
 					
-					result=dao.updateNum(spi1, row+1); //데이터 베이스의 값을 스피너와 동일하게 변경
-					model.setValueAt(spi1, row, 3); //테이블도 스피너와 동일한 값을 가지도록 변경	
-					
+					if(row!=-1) {
+						result=dao.updateNum(spi1, row+1); //데이터 베이스의 값을 스피너와 동일하게 변경
+						model.setValueAt(spi1, row, 3); //테이블도 스피너와 동일한 값을 가지도록 변경	
+					}
 				}//스피너 활성화 여부 if
 				
 			}
