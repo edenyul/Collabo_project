@@ -127,13 +127,12 @@ public class OrderSetSide extends JFrame implements MouseListener{
 		
 		lblBeverage=new JLabel[10];
 		
-		for(int i=0; i<lblBeverage.length-1; i++) {
-			lblBeverage[i]=new JLabel();
+		for(int i=0; i<lblBeverage.length; i++) {
+			lblBeverage[i]=new JLabel("음료"+i);
 			panel_7.add(lblBeverage[i]);
 			lblBeverage[i].addMouseListener(this);
-			//lblBeverage[i].setIcon(new ImageIcon(OrderSetSide.class.getResource("/imgBeverage/drl"+(i+1)+".jpg")));
+			//lblBeverage[i].setIcon(new ImageIcon(OrderSetSide.class.getSimpleName("//"+name+".jpg")));
 		}
-		
 		
 		JPanel panel_6 = new JPanel();
 		panel_4.add(panel_6);
@@ -158,7 +157,7 @@ public class OrderSetSide extends JFrame implements MouseListener{
 			lblSide[i]=new JLabel("사이드"+i);
 			panel_8.add(lblSide[i]);
 			lblSide[i].addMouseListener(this);
-			//lblSide[i].setIcon(new ImageIcon(OrderSetSide.class.getResource("/imgside/sid"+(i+1)+".jpg")));
+			//lblSide[i].setIcon(new ImageIcon(OrderSetSide.class.getSimpleName("//"+name+".jpg")));
 		}
 		
 		JLabel lblnull8 = new JLabel("  ");

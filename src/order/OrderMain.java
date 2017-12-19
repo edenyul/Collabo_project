@@ -14,10 +14,8 @@ import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.Calendar;
 import java.util.Vector;
 
-import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -59,24 +57,19 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener, 
 	private JSpinner spinner;
 	private int spi1, spi2;
 	
-//---- 시그니처 부분 ------------------------------------------------------------------
-
-	//재료 이미지를 보여줄 레이블
-	private JLabel[] lblmake;
-	//선택할 수 있는 재료 이름
-	private JCheckBox chkmake[]=new JCheckBox[9];
-	//선택할 수 있는 재료 이름
-	private String bgName[]= {"패티 (+1000원)", "베이컨 (+700원)", "계란후라이 (+600원)", "치즈 (+500원)","양상추 (+600원)",
-			"양파 (+400원)","버섯 (+500원)","토마토 (+500원)","피클 (+400원)"};
-	private ImageIcon icon[]=new ImageIcon[9];
-
-	private JTextField textField_1;
+	//---- 시그니처 부분 ------------------------------------------------------------------
 	
-	//시그 재료 총합
-	private int sigsum=3000;
-	private JButton button_2;
-	private int num=1;//시그이름숫자 증가
+		//재료 이미지를 보여줄 레이블
+		private JLabel[] lblmake;
+		//선택할 수 있는 재료 이름
+		private JCheckBox chkmake[]=new JCheckBox[9];
+		//선택할 수 있는 재료 이름
+		private String bgName[]= {"패티 (+1000원)", "베이컨 (+700원)", "계란후라이 (+600원)", "치즈 (+500원)","양상추 (+600원)",
+				"양파 (+400원)","버섯 (+500원)","토마토 (+500원)","피클 (+400원)"};
+		private ImageIcon icon[]=new ImageIcon[9];
 	
+		private JTextField textField_1;
+		
 //------------- DB -------------------------------------
 	
 	private OrderDAO dao=new OrderDAO();
@@ -89,18 +82,6 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener, 
 	private int[] b=new int[6]; //선택 메뉴의 개수
 	private int[] set=new int[6];
 	private int H;
-	
-//------------- ADVERTISEMENT --------------------------
-
-	public JRadioButton rabtn[];	//라디오 버튼
-	private JLabel lblNewLabel_2;		//사진을 붙일 라벨
-	private int P;	//일정 시간마다 사진을 변경하기 위함
-	private int num2=0;	//일정 시간을 재기 위함
-	
-	private JLabel NewAmazingLabel;	//서브프레임에 띄울 사진을 붙일 라벨
-	
-	public String[] picture= {"m_1","m_2","m_3","m_4","m_5"};
-		
 
 	/**
 	 * Launch the application.
@@ -151,9 +132,6 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener, 
 		panel_15.setLayout(new BorderLayout(0, 0));
 		
 		btnckdel = new JButton("\uC120\uD0DD \uCDE8\uC18C");
-		btnckdel.setForeground(Color.WHITE);
-		btnckdel.setFont(new Font("새굴림", Font.BOLD, 12));
-		btnckdel.setBackground(Color.DARK_GRAY);
 		panel_15.add(btnckdel, BorderLayout.NORTH);
 		
 		JPanel panel_1 = new JPanel();
@@ -162,13 +140,12 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener, 
 		
 		JLabel lblNewLabel_4 = new JLabel("\uC218\uB7C9 \uC120\uD0DD");
 		lblNewLabel_4.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel_4.setFont(new Font("맑은 고딕", Font.BOLD, 12));
+		lblNewLabel_4.setFont(new Font("굴림", Font.BOLD, 12));
 		panel_1.add(lblNewLabel_4);
 		
 		//////////////////스피너///////////////////////////
 		
 		spinner = new JSpinner();
-		spinner.setFont(new Font("맑은 고딕", Font.BOLD, 12));
 		
 		spinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
@@ -194,7 +171,6 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener, 
 		////////////////////////////////////////////////
 		
 		JPanel panel_16 = new JPanel();
-		panel_16.setBackground(new Color(255, 255, 204));
 		ppick.add(panel_16, BorderLayout.CENTER);
 		panel_16.setLayout(new BorderLayout(0, 0));
 		
@@ -238,13 +214,10 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener, 
 		pbuy.setLayout(new BorderLayout(0, 0));
 		
 		JPanel panel_9 = new JPanel();
-		panel_9.setBackground(new Color(255, 255, 204));
 		pbuy.add(panel_9, BorderLayout.WEST);
 		panel_9.setLayout(new GridLayout(0, 2, 0, 0));
 		
 		JLabel lblNewLabel_1 = new JLabel("\uC8FC\uBB38\uC218\uB7C9 : ");
-		lblNewLabel_1.setFont(new Font("맑은 고딕", Font.BOLD, 12));
-		lblNewLabel_1.setBackground(Color.WHITE);
 		lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
 		panel_9.add(lblNewLabel_1);
 		
@@ -253,8 +226,6 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener, 
 		txtNum.setColumns(10);
 		
 		JLabel label = new JLabel("\uC8FC\uBB38\uAE08\uC561 : ");
-		label.setFont(new Font("맑은 고딕", Font.BOLD, 12));
-		label.setBackground(Color.WHITE);
 		label.setHorizontalAlignment(SwingConstants.CENTER); 
 		panel_9.add(label);
 		
@@ -267,33 +238,21 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener, 
 		panel_10.setLayout(new GridLayout(0, 3, 0, 0));
 		
 		btnAlldel = new JButton("\uC804\uCCB4\uCDE8\uC18C");
-		btnAlldel.setForeground(Color.WHITE);
-		btnAlldel.setFont(new Font("새굴림", Font.BOLD, 16));
-		btnAlldel.setBackground(Color.DARK_GRAY);
 		panel_10.add(btnAlldel);
 		
 		btnCash = new JButton("\uD604\uAE08\uACB0\uC81C");
-		btnCash.setFont(new Font("새굴림", Font.BOLD, 16));
-		btnCash.setForeground(Color.WHITE);
-		btnCash.setBackground(new Color(0, 51, 204));
 		panel_10.add(btnCash);
 		
 		btnCard = new JButton("\uCE74\uB4DC\uACB0\uC81C");
-		btnCard.setFont(new Font("새굴림", Font.BOLD, 16));
-		btnCard.setForeground(Color.WHITE);
-		btnCard.setBackground(new Color(255, 51, 51));
 		panel_10.add(btnCard);
 		
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-		tabbedPane.setBackground(new Color(255, 255, 204));
 		panel.add(tabbedPane, BorderLayout.CENTER);
 		
 		JPanel panel_3 = new JPanel();
-		panel_3.setBackground(Color.WHITE);
 		tabbedPane.addTab("세트메뉴", null, panel_3, null);
 		
 		JPanel phambuger = new JPanel();
-		phambuger.setBackground(new Color(255, 255, 255));
 		tabbedPane.addTab("햄버거", null, phambuger, null);
 		phambuger.setLayout(new BorderLayout(0, 0));
 		
@@ -301,23 +260,15 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener, 
 		phambuger.add(panel_26, BorderLayout.SOUTH);
 		
 		JButton button = new JButton("\u25C0 \uC774\uC804");
-		button.setBackground(new Color(255, 51, 51));
-		button.setFont(new Font("굴림체", Font.BOLD, 12));
-		button.setForeground(new Color(255, 255, 255));
 		panel_26.add(button);
 		
 		JButton button_1 = new JButton("\uB2E4\uC74C \u25B6");
-		button_1.setBackground(new Color(255, 51, 51));
-		button_1.setForeground(new Color(255, 255, 255));
-		button_1.setFont(new Font("굴림체", Font.BOLD, 12));
 		panel_26.add(button_1);
 		
 		JPanel pside = new JPanel();
-		pside.setBackground(new Color(255, 255, 255));
 		tabbedPane.addTab("사이드", null, pside, null);
 		
 		JPanel pdrink = new JPanel();
-		pdrink.setBackground(new Color(255, 255, 255));
 		tabbedPane.addTab("음료", null, pdrink, null);
 		
 		JPanel panel_20 = new JPanel();
@@ -325,13 +276,10 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener, 
 		panel_20.setLayout(new BorderLayout(0, 0));
 		
 		JPanel panel_21 = new JPanel();
-		panel_21.setBackground(new Color(255, 255, 255));
 		panel_20.add(panel_21, BorderLayout.NORTH);
 		
-		JLabel lblNewLable_5 = new JLabel("\uC6D0\uD558\uB294 \uC7AC\uB8CC\uB97C \uC120\uD0DD\uD558\uC138\uC694");
-		lblNewLable_5.setForeground(new Color(153, 51, 0));
-		lblNewLable_5.setFont(new Font("새굴림", Font.BOLD, 12));
-		panel_21.add(lblNewLable_5);
+		JLabel lblNewLabel_5 = new JLabel("\uC6D0\uD558\uB294 \uC7AC\uB8CC\uB97C \uC120\uD0DD\uD558\uC138\uC694");
+		panel_21.add(lblNewLabel_5);
 		
 		JPanel panel_6 = new JPanel();
 		panel_20.add(panel_6, BorderLayout.CENTER);
@@ -339,29 +287,22 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener, 
 		
 		//이미지 나오는 패널
 		JPanel panel_8 = new JPanel();
-		panel_8.setBackground(new Color(255, 255, 255));
 		panel_8.setLayout(new GridLayout(0,1,0,0));
 		lblmake =new  JLabel[9];
 		
 		for(int i=0; i<lblmake.length; i++) { //공간을 만들어준다.
 			lblmake[i] =new JLabel();
-			lblmake[i].setBackground(new Color(255, 255, 255));
 			panel_8.add(lblmake[i]);
 		}		
 		panel_6.add(panel_8);
 		
 		//체크 박스 넣는 패널
 		JPanel panel_11 = new JPanel();
-		panel_11.setBackground(new Color(255, 255, 255));
 		panel_11.setLayout(new GridLayout(0,1,0,0));
 		//첫번째 패널에 체크박스  add
 		for(int i=0;i<chkmake.length;i++) {
 			//체크박스 객체 생성해서 배열에 담기
 			chkmake[i]=new JCheckBox(bgName[i]);
-			chkmake[i].setFont(new Font("새굴림", Font.BOLD, 12));
-			chkmake[i].setForeground(new Color(153, 51, 0));
-			chkmake[i].setBackground(new Color(255, 255, 255));
-			
 			panel_11.add(chkmake[i]);
 			//생성된 체크박스를 text에  add
 		}
@@ -381,75 +322,37 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener, 
 		textField_1.setColumns(10);
 		panel_7.add(textField_1);
 		
-		button_2 = new JButton("\uC644\uC131");
-		button_2.setFont(new Font("새굴림", Font.BOLD, 12));
-		button_2.setForeground(new Color(255, 255, 255));
-		button_2.setBackground(new Color(255, 51, 51));
+		JButton button_2 = new JButton("\uC644\uC131");
 		panel_7.add(button_2);
 		
 		JPanel ptitle = new JPanel();
-		ptitle.setBackground(Color.ORANGE);
 		ptitle.setForeground(Color.LIGHT_GRAY);
 		contentPane.add(ptitle, BorderLayout.NORTH);
 		
-		JLabel lbltitle = new JLabel();
-		lbltitle.setIcon(new ImageIcon(OrderMain.class.getResource("/order/main_img.png")));
-		lbltitle.setForeground(Color.BLACK);
-		lbltitle.setFont(new Font("맑은 고딕", Font.BOLD, 18));
+		JLabel lbltitle = new JLabel("\uBC84\uAC70 \uC564 \uC790\uBC14");
+		lbltitle.setFont(new Font("굴림", Font.BOLD, 18));
 		ptitle.add(lbltitle);
 		
 		JPanel pbanner = new JPanel();
-		pbanner.setBackground(Color.ORANGE);
 		contentPane.add(pbanner, BorderLayout.SOUTH);
 		pbanner.setLayout(new BorderLayout(0, 0));
 		
 		JPanel panel_25 = new JPanel();
-		panel_25.setBackground(Color.ORANGE);
 		pbanner.add(panel_25, BorderLayout.SOUTH);
 		
-//------------- ADVERTISEMENT --------------------------
+		JRadioButton rdbtnNewRadioButton = new JRadioButton("New radio button");
+		panel_25.add(rdbtnNewRadioButton);
 		
-		//--/**인애*/
-		lblNewLabel_2 = new JLabel("");
-		lblNewLabel_2.setIcon(new ImageIcon(OrderMain.class.getResource("/burger/m_1.jpg")));
+		JRadioButton rdbtnNewRadioButton_1 = new JRadioButton("New radio button");
+		panel_25.add(rdbtnNewRadioButton_1);
+		
+		JRadioButton rdbtnNewRadioButton_2 = new JRadioButton("New radio button");
+		panel_25.add(rdbtnNewRadioButton_2);
+		
+		JLabel lblNewLabel_2 = new JLabel("");
+		lblNewLabel_2.setIcon(new ImageIcon(OrderMain.class.getResource("/imgBanner/banner1.png")));
 		pbanner.add(lblNewLabel_2, BorderLayout.CENTER);
-		lblNewLabel_2.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg1) {
-				Object obj=arg1.getSource();
-				/** 3.광고 사진 클릭 시 자세한 내용이 표시된 사진 새 창 출력 */
-				
-				System.out.println("mouseClick");	//테스트
-				
-				//JDialog창 띄우기
-				Winner2 win2=new Winner2();
-				win2.setVisible(true);
-				
-				/////////////////////////////////////////////////
-				///새창띄우기까지 완료///	
-				
-				
-				JLabel lbl=win2.lbl;
-				
-				for(int i=0;i<picture.length;i++) {
-					if(P==i) {	//P가 i번째 라면
-						//이미지 띄우기 효과
-						System.out.println("p값 "+P+"==========================");
-						lbl.setIcon(new ImageIcon(Winner2.class.getResource("/burger/"+win2.winner[P]+".jpg")));
-						//버튼 클릭 효과
-						win2.btn[i].setSelected(true);
-					}
-				}
-				/*//이미지 띄우기 효과
-				System.out.println("p값 "+P+"==========================");
-				lbl.setIcon(new ImageIcon(Winner2.class.getResource("/burger/"+win2.winner[P]+".jpg")));
-				//버튼 클릭 효과
-				win2.btn[P].setSelected(true);*/
-			}
-			
-		});
-//------------- ADVERTISEMENT --------------------------
-	
+		
 		JLabel lblNewLabel_3 = new JLabel("     ");
 		pbanner.add(lblNewLabel_3, BorderLayout.NORTH);
 		
@@ -482,30 +385,30 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener, 
 		
 		
 		lblset1 = new JLabel("");
-		lblset1.setIcon(new ImageIcon(OrderMain.class.getResource("/imgSet/setm1.jpg")));
+		lblset1.setIcon(new ImageIcon(OrderMain.class.getResource("/imgSet/set1.png")));
 		lblset1.setHorizontalAlignment(SwingConstants.CENTER);
 		pset.add(lblset1);
 		
 		lblset2 = new JLabel("");
-		lblset2.setIcon(new ImageIcon(OrderMain.class.getResource("/imgSet/setm2.jpg")));
+		lblset2.setIcon(new ImageIcon(OrderMain.class.getResource("/imgSet/set2.png")));
 		lblset2.setHorizontalAlignment(SwingConstants.CENTER);
 		pset.add(lblset2);
 		
 		lblset3 = new JLabel("");
-		lblset3.setIcon(new ImageIcon(OrderMain.class.getResource("/imgSet/setm3.jpg")));
+		lblset3.setIcon(new ImageIcon(OrderMain.class.getResource("/imgSet/set3.png")));
 		lblset3.setHorizontalAlignment(SwingConstants.CENTER);
 		pset.add(lblset3);
 		
 		lblset4 = new JLabel("");
-		lblset4.setIcon(new ImageIcon(OrderMain.class.getResource("/imgSet/setm4.jpg")));
+		lblset4.setIcon(new ImageIcon(OrderMain.class.getResource("/imgBanner/\uC81C\uBAA9 \uC5C6\uC74C-1.jpg")));
 		lblset4.setHorizontalAlignment(SwingConstants.CENTER);
 		pset.add(lblset4);
 		
-		lblset5 = new JLabel("/imgSet/setm5.jpg");
+		lblset5 = new JLabel("\"\uC900\uBE44 \uC911\uC778 \uBA54\uB274 \uC785\uB2C8\uB2E4.\"");
 		lblset5.setHorizontalAlignment(SwingConstants.CENTER);
 		pset.add(lblset5);
 		
-		lblset6 = new JLabel("/imgSet/setm6.jpg");
+		lblset6 = new JLabel("\"\uC900\uBE44 \uC911\uC778 \uBA54\uB274 \uC785\uB2C8\uB2E4.\"");
 		lblset6.setHorizontalAlignment(SwingConstants.CENTER);
 		pset.add(lblset6);
 		
@@ -514,39 +417,12 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener, 
 		panel_5.setLayout(new GridLayout(1, 0, 0, 0));
 		
 		JButton btnMain = new JButton("\uBA54\uC778 \uD654\uBA74");
-		btnMain.setFont(new Font("새굴림", Font.BOLD, 12));
-		btnMain.setForeground(Color.WHITE);
-		btnMain.setBackground(new Color(0, 51, 204));
 		btnMain.addActionListener(new ActionListener() { //'메인 화면' 버튼이 클릭 되었을 시
 			public void actionPerformed(ActionEvent e) {
 				change("Pset"); //햄버거 세트창으로 다시 이동
 			}
 		});
 		panel_5.add(btnMain);
-		
-/**------------- ADVERTISEMENT --------------------------*/
-	
-		ButtonGroup group=new ButtonGroup(); //중복 선택을 못하게 하기 위한 그룹선언.
-		rabtn=new JRadioButton[5];	//라디오 버튼 총 5개 배열 선언
-		
-		for(int i=0; i<rabtn.length; i++) {
-			rabtn[i]=new JRadioButton();
-			rabtn[i].setText(String.valueOf(i+1)); //라디오 이름 
-			panel_25.add(rabtn[i]);	//패널 1에 넣기
-			group.add(rabtn[i]);	//그룹에 담기
-			rabtn[i].addActionListener(this);	//액션 이벤트
-			rabtn[i].setBackground(Color.ORANGE);//버튼 색 
-		}
-		
-		rabtn[0].setSelected(true);
-		
-		
-		Cal c=new Cal();	//초를 재기 위한 class 호출
-		c.start();
-		
-		
-/**------------- ADVERTISEMENT --------------------------	*/
-
 		
 		
 		lblset1.addMouseListener(this);
@@ -558,7 +434,6 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener, 
 		
 		btnckdel.addActionListener(this);
 		btnAlldel.addActionListener(this);
-		button_2.addActionListener(this);
 		
 		table ta=new table(); //테이블 갱신 클래스
 		ta.start(); 
@@ -642,38 +517,11 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener, 
 			
 		}else if(obj==btnCard) { //카드 결제
 			
-		}else if(obj==button_2) {//완성
-			vec=dao.selectAll();
-			
-			vo.setNo(vec.size()+1);//사이즈 번호
-			vo.setMenu("시그니처"+num);
-			vo.setPrice(Integer.parseInt(textField_1.getText()));
-			vo.setNum(1);
-			dao.insert(vo);
-			num++;
-			//이전에 선택된거 해제
-			for(int i=0; i<9; i++)
-			lblmake[i].setIcon(null);
-			
-			textField_1.setText(null);
-			//체크 해제
-			for(int i=0; i<9; i++)
-			chkmake[i].setSelected(false);
-		}
-		
-	/**------------- ADVERTISEMENT --------------------------*/
-
-		for(int i=0; i<rabtn.length;i++) {
-			if(obj==rabtn[i]) {//해당 라디오 버튼이 클릭 되었을 경우
-				lblNewLabel_2.setIcon(new ImageIcon(OrderMain.class.getResource("/burger/"+picture[i]+".jpg"))); //그에 해당하는 사진 붙이기
-				P=i; //특정 시간이 되면 다음으로 변경하기 위해  현재의 사진이 무엇인지 저장.
-				num2=0;
-			}
 		}
 		
 		
 		
-	}//action listner
+	}
 	
 	
 	@Override
@@ -683,22 +531,22 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener, 
 		vec=dao.selectAll();
 		
 		if(obj==lblset1) {
-			click(0,"와퍼 주니어 세트",5000);
+			click(0,"햄버거 세트1",5000);
 			
 		}else if(obj==lblset2) {
-			click(1,"치즈 와퍼 주니어 세트",5500);
+			click(1,"햄버거 세트2",5500);
 			
 		}else if(obj==lblset3) {
-			click(2,"불고기 치즈 와퍼 세트",4000);
+			click(2,"햄버거 세트3",4000);
 			
 		}else if(obj==lblset4) {
-			click(3,"롱 치킨 버거 세트",3500);
+			click(3,"햄버거 세트4",3500);
 			
 		}else if(obj==lblset5) {
-			click(4,"치즈 버거 세트",5003);
+			//click(4,"햄버거 세트5",5003);
 			
 		}else if(obj==lblset6) {
-			click(5,"불고기 버거 세트",1324);
+			//click(5);
 		}
 		
 	}
@@ -957,7 +805,7 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener, 
 			 }catch(ArrayIndexOutOfBoundsException e){
 				 model.removeRow(vec.size()-2);	
 			 }
-			
+			 System.out.println("1");
 		 }else if(conform==2) {
 			if(spi1-1>0) {
 				try {
@@ -978,7 +826,7 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener, 
 					 model.removeRow(vec.size()-2);	
 				 }
 			}
-		
+			 System.out.println("2");
 		 }else {
 			if(row!=-1) {
 				result=dao.updateNum(spi1-1, row+1);
@@ -991,7 +839,7 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener, 
 				}
 				refresh();
 			}
-			 
+			 System.out.println("3");
 		 }//eles
 	
 	}//side
@@ -1002,72 +850,13 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener, 
 	public void itemStateChanged(ItemEvent e) { //시그니처 
 		JCheckBox check=(JCheckBox) e.getItem();
 		
-		int price[]= {1000, 700, 600, 500, 600, 400, 500, 500, 400};
-		sigsum=0;
 		for(int i=0;i<9;i++) {
-				
 			if(chkmake[i].isSelected()) { //선택되면 => 이미지
 				lblmake[i].setIcon(new ImageIcon(OrderMain.class.getResource("/imgSig/"+bgName[i]+".png")));
-					sigsum+=price[i];			
-					textField_1.setText(sigsum+""); //넣어줄 값을 string
-				
 			}else {
-			
 				lblmake[i].setIcon(null);
-				if(chkmake[i].isSelected()) {
-					sigsum+=price[i];
-				}
-				textField_1.setText(sigsum+"");
-				
-			}//6ge
+			}
 		}
-		//기본 값인 번 3000원 
-		if(sigsum!=0) {
-			textField_1.setText(sigsum+3000+"");
-		}
-		System.out.println(sigsum);
 	}//end item
 
-	/**------------- ADVERTISEMENT --------------------------*/
-	class Cal extends Thread{
-		public void run() {
-			
-			Calendar cal=Calendar.getInstance();
-			String sec=null;
-			String[] picture= {"m_1","m_2","m_3","m_4","m_5"};	//사진이름
-			int i=0;
-			while(true) {	//계속 돌림-슬라이드쇼
-				try {
-					cal=Calendar.getInstance();
-					sec=(cal.get(Calendar.SECOND)<10?"0":"")+cal.get(Calendar.SECOND);
-					
-					sleep(1000); //1초마다 쉬기
-					
-				}catch(InterruptedException e) {
-					e.printStackTrace();
-				}
-		;
-				num++; //1초가 지나면 num++
-				
-				if(num%5==0) { //5초가 지났을 경우
-					
-					if(i<5) {						
-						lblNewLabel_2.setIcon(new ImageIcon(OrderMain.class.getResource("/burger/"+picture[i]+".jpg"))); //다음 사진 라벨에 붙이기
-						rabtn[i].setSelected(true);//버튼도 같이 다음으로 이동
-					}else {
-						i=0;
-						lblNewLabel_2.setIcon(new ImageIcon(OrderMain.class.getResource("/burger/"+picture[i]+".jpg"))); //다음 사진 라벨에 붙이기
-						rabtn[i].setSelected(true);//버튼도 같이 다음으로 이동
-					}
-					i++;
-					
-				}
-		
-		
-			}//while
-		}//run
-		
-	}//cal
-	
-	
 }
