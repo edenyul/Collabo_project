@@ -1,71 +1,75 @@
 package order;
 
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumnModel;
-
-import javax.swing.JLabel;
-import javax.swing.JTabbedPane;
 import java.awt.CardLayout;
-
-import javax.swing.JButton;
-import javax.swing.JTable;
-import java.awt.GridLayout;
-import java.awt.Font;
-import javax.swing.JScrollPane;
-import javax.swing.SwingConstants;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.JRadioButton;
-import javax.swing.JCheckBox;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Vector;
 
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.event.ChangeListener;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
-import java.beans.VetoableChangeListener;
-import java.lang.ref.Reference;
-import java.beans.PropertyChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 
-public class OrderMain extends JFrame implements ActionListener, MouseListener{
+public class OrderMain extends JFrame implements ActionListener, MouseListener, ItemListener{
 	
 	private JPanel contentPane;
 	public JTable table; //구입한 상품 표
 	public DefaultTableModel model; //표를 담기 위한 모델
 	private JTextField txtNum; //주문수량
 	private JTextField txtSum; //주문금액
-	private JTextField textField;
 	public JPanel panel_4;
 	private JLabel lblset1, lblset2, lblset3, lblset4, lblset5, lblset6;
 	//private int num=0; //테이블 개수 수량  체크
 
 	private CardLayout card=new CardLayout(); //카드 레이아웃
-	//시그니처 라디오박스 : 번
-	private JRadioButton rbBun;
-	//시그니처 체크박스
-	private JCheckBox ckBeef, ckBacon, ckEgg, ckCheese, ckLettuce, ckOnion, ckMushroom, ckTomato, ckPickles;
 	//선택취소 버튼, 
 	private JButton btnckdel, btnAlldel, btnCash, btnCard;
 	private JScrollPane scrollPane;
 	private JSpinner spinner;
 	private int spi1, spi2;
 	
+	//---- 시그니처 부분 ------------------------------------------------------------------
+	
+		//재료 이미지를 보여줄 레이블
+		private JLabel[] lblmake;
+		//선택할 수 있는 재료 이름
+		private JCheckBox chkmake[]=new JCheckBox[9];
+		//선택할 수 있는 재료 이름
+		private String bgName[]= {"패티 (+1000원)", "베이컨 (+700원)", "계란후라이 (+600원)", "치즈 (+500원)","양상추 (+600원)",
+				"양파 (+400원)","버섯 (+500원)","토마토 (+500원)","피클 (+400원)"};
+		private ImageIcon icon[]=new ImageIcon[9];
+	
+		private JTextField textField_1;
+		
 //------------- DB -------------------------------------
 	
 	private OrderDAO dao=new OrderDAO();
@@ -266,173 +270,59 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener{
 		JPanel pdrink = new JPanel();
 		tabbedPane.addTab("음료", null, pdrink, null);
 		
-		JPanel psigniture = new JPanel();
-		tabbedPane.addTab("시그니처", null, psigniture, null);
-		psigniture.setLayout(new BorderLayout(0, 0));
-		
-		JPanel panel_12 = new JPanel();
-		psigniture.add(panel_12, BorderLayout.NORTH);
-		
-		JLabel label_1 = new JLabel("\uC6D0\uD558\uB294 \uC7AC\uB8CC\uB97C \uC120\uD0DD\uD558\uC138\uC694");
-		panel_12.add(label_1);
-		
-		JPanel panel_13 = new JPanel();
-		psigniture.add(panel_13, BorderLayout.EAST);
-		panel_13.setLayout(new GridLayout(0, 2, 0, 0));
-		
-		rbBun = new JRadioButton("\uBC88 (+3000\uC6D0)");
-		rbBun.setEnabled(false);
-		rbBun.setSelected(true);
-		panel_13.add(rbBun);
-		
-		ckBeef = new JCheckBox("\uD328\uD2F0 (+1000\uCC9C)");
-		panel_13.add(ckBeef);
-		
-		ckBacon = new JCheckBox("\uBCA0\uC774\uCEE8 (+700\uC6D0)");
-		panel_13.add(ckBacon);
-		
-		ckEgg = new JCheckBox("\uACC4\uB780\uD6C4\uB77C\uC774 (+600\uC6D0)");
-		panel_13.add(ckEgg);
-		
-		ckCheese = new JCheckBox("\uCE58\uC988 (+500\uC6D0)");
-		panel_13.add(ckCheese);
-		
-		ckLettuce = new JCheckBox("\uC591\uC0C1\uCD94 (+600\uC6D0)");
-		panel_13.add(ckLettuce);
-		
-		ckOnion = new JCheckBox("\uC591\uD30C (+400\uC6D0)");
-		panel_13.add(ckOnion);
-		
-		ckMushroom = new JCheckBox("\uBC84\uC12F");
-		panel_13.add(ckMushroom);
-		
-		ckTomato = new JCheckBox("\uD1A0\uB9C8\uD1A0");
-		panel_13.add(ckTomato);
-		
-		ckPickles = new JCheckBox("\uD53C\uD074");
-		panel_13.add(ckPickles);
-		
-		JPanel panel_14 = new JPanel();
-		psigniture.add(panel_14, BorderLayout.CENTER);
-		panel_14.setLayout(new GridLayout(0, 1, 0, 0));
-		
-		JLabel imgBunTop = new JLabel("");
-		imgBunTop.setIcon(new ImageIcon(OrderMain.class.getResource("/imgSig/Bun-Top.png")));
-		imgBunTop.setHorizontalAlignment(SwingConstants.CENTER);
-		panel_14.add(imgBunTop);
-		
-		JLabel img1 = new JLabel("");
-		img1.setHorizontalAlignment(SwingConstants.CENTER);
-		panel_14.add(img1);
-		
-		JLabel img2 = new JLabel("");
-		img2.setHorizontalAlignment(SwingConstants.CENTER);
-		panel_14.add(img2);
-		
-		JLabel img3 = new JLabel("");
-		img3.setHorizontalAlignment(SwingConstants.CENTER);
-		panel_14.add(img3);
-		
-		JLabel img4 = new JLabel("");
-		img4.setHorizontalAlignment(SwingConstants.CENTER);
-		panel_14.add(img4);
-		
-		JLabel img5 = new JLabel("");
-		img5.setHorizontalAlignment(SwingConstants.CENTER);
-		panel_14.add(img5);
-		
-		JLabel img6 = new JLabel("");
-		img6.setHorizontalAlignment(SwingConstants.CENTER);
-		panel_14.add(img6);
-		
-		JLabel img7 = new JLabel("");
-		img7.setHorizontalAlignment(SwingConstants.CENTER);
-		panel_14.add(img7);
-		
-		JLabel img8 = new JLabel("");
-		img8.setHorizontalAlignment(SwingConstants.CENTER);
-		panel_14.add(img8);
-		
-		JLabel img9 = new JLabel("");
-		img9.setHorizontalAlignment(SwingConstants.CENTER);
-		panel_14.add(img9);
-		
-		JLabel imgBunBottom = new JLabel("");
-		imgBunBottom.setIcon(new ImageIcon(OrderMain.class.getResource("/imgSig/Bun-Bottom.png")));
-		imgBunBottom.setHorizontalAlignment(SwingConstants.CENTER);
-		panel_14.add(imgBunBottom);
-		
-		JPanel panel_17 = new JPanel();
-		psigniture.add(panel_17, BorderLayout.SOUTH);
-		
-		JLabel lblNewLabel = new JLabel("\uC9C4\uD589 \uAE08\uC561 : ");
-		panel_17.add(lblNewLabel);
-		
-		textField = new JTextField();
-		panel_17.add(textField);
-		textField.setColumns(10);
-		
-		JButton btmmake = new JButton("\uC644\uC131");
-		panel_17.add(btmmake);
-		
 		JPanel panel_20 = new JPanel();
-		tabbedPane.addTab("New tab", null, panel_20, null);
+		tabbedPane.addTab("시그니처", null, panel_20, null);
 		panel_20.setLayout(new BorderLayout(0, 0));
 		
 		JPanel panel_21 = new JPanel();
 		panel_20.add(panel_21, BorderLayout.NORTH);
 		
-		JPanel panel_22 = new JPanel();
-		panel_20.add(panel_22, BorderLayout.WEST);
-		panel_22.setLayout(new GridLayout(1, 0, 0, 0));
+		JLabel lblNewLabel_5 = new JLabel("\uC6D0\uD558\uB294 \uC7AC\uB8CC\uB97C \uC120\uD0DD\uD558\uC138\uC694");
+		panel_21.add(lblNewLabel_5);
 		
-		JLabel label_2 = new JLabel("");
-		label_2.setIcon(new ImageIcon(OrderMain.class.getResource("/imgSig/Bun-Top.png")));
-		label_2.setHorizontalAlignment(SwingConstants.CENTER);
-		panel_22.add(label_2);
+		JPanel panel_6 = new JPanel();
+		panel_20.add(panel_6, BorderLayout.CENTER);
+		panel_6.setLayout(new GridLayout(0, 2, 0, 0));
 		
-		JLabel label_3 = new JLabel("");
-		label_3.setHorizontalAlignment(SwingConstants.CENTER);
-		panel_22.add(label_3);
+		//이미지 나오는 패널
+		JPanel panel_8 = new JPanel();
+		panel_8.setLayout(new GridLayout(0,1,0,0));
+		lblmake =new  JLabel[9];
 		
-		JLabel label_4 = new JLabel("");
-		label_4.setHorizontalAlignment(SwingConstants.CENTER);
-		panel_22.add(label_4);
+		for(int i=0; i<lblmake.length; i++) { //공간을 만들어준다.
+			lblmake[i] =new JLabel();
+			panel_8.add(lblmake[i]);
+		}		
+		panel_6.add(panel_8);
 		
-		JLabel label_5 = new JLabel("");
-		label_5.setHorizontalAlignment(SwingConstants.CENTER);
-		panel_22.add(label_5);
+		//체크 박스 넣는 패널
+		JPanel panel_11 = new JPanel();
+		panel_11.setLayout(new GridLayout(0,1,0,0));
+		//첫번째 패널에 체크박스  add
+		for(int i=0;i<chkmake.length;i++) {
+			//체크박스 객체 생성해서 배열에 담기
+			chkmake[i]=new JCheckBox(bgName[i]);
+			panel_11.add(chkmake[i]);
+			//생성된 체크박스를 text에  add
+		}
+		panel_6.add(panel_11);
 		
-		JLabel label_6 = new JLabel("");
-		label_6.setHorizontalAlignment(SwingConstants.CENTER);
-		panel_22.add(label_6);
+		//이벤트 리스너 붙이기
+		for(int i=0;i<chkmake.length;i++)
+			chkmake[i].addItemListener(this);
 		
-		JLabel label_7 = new JLabel("");
-		label_7.setHorizontalAlignment(SwingConstants.CENTER);
-		panel_22.add(label_7);
+		JPanel panel_7 = new JPanel();
+		panel_20.add(panel_7, BorderLayout.SOUTH);
 		
-		JLabel label_8 = new JLabel("");
-		label_8.setHorizontalAlignment(SwingConstants.CENTER);
-		panel_22.add(label_8);
+		JLabel lblNewLabel_6 = new JLabel("\uC9C4\uD589 \uAE08\uC561 : ");
+		panel_7.add(lblNewLabel_6);
 		
-		JLabel label_9 = new JLabel("");
-		label_9.setHorizontalAlignment(SwingConstants.CENTER);
-		panel_22.add(label_9);
+		textField_1 = new JTextField();
+		textField_1.setColumns(10);
+		panel_7.add(textField_1);
 		
-		JLabel label_10 = new JLabel("");
-		label_10.setHorizontalAlignment(SwingConstants.CENTER);
-		panel_22.add(label_10);
-		
-		JLabel label_11 = new JLabel("");
-		label_11.setHorizontalAlignment(SwingConstants.CENTER);
-		panel_22.add(label_11);
-		
-		JLabel label_12 = new JLabel("");
-		label_12.setHorizontalAlignment(SwingConstants.CENTER);
-		panel_22.add(label_12);
-		
-		JPanel panel_23 = new JPanel();
-		panel_20.add(panel_23, BorderLayout.CENTER);
+		JButton button_2 = new JButton("\uC644\uC131");
+		panel_7.add(button_2);
 		
 		JPanel ptitle = new JPanel();
 		ptitle.setForeground(Color.LIGHT_GRAY);
@@ -899,15 +789,22 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener{
 		
 		 if(conform==1) {
 			 try {
-				 dao.delete(vec.get(vec.size()-1).getNo());
-				 model.removeRow(vec.size()-1);	
-				 
-				 if(vec.size()!=vec.get(vec.size()-1).getNo()) {
-					dao.delete(vec.get(vec.size()-1).getNo());
-				}
+				 if(spi1-1<=0) {
+					 dao.delete(vec.get(vec.size()-1).getNo());
+					 model.removeRow(vec.size()-1);	
+					 
+					 if(vec.size()!=vec.get(vec.size()-1).getNo()) {
+						dao.delete(vec.get(vec.size()-1).getNo());
+					}
+				 }else {
+					result=dao.updateNum(spi1-1, row+1);
+					model.setValueAt(spi1-1, row, 3);
+					spinner.setValue(spi1-1);
+				 }
 			 }catch(ArrayIndexOutOfBoundsException e){
 				 model.removeRow(vec.size()-2);	
 			 }
+			 System.out.println("1");
 		 }else if(conform==2) {
 			if(spi1-1>0) {
 				try {
@@ -928,6 +825,7 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener{
 					 model.removeRow(vec.size()-2);	
 				 }
 			}
+			 System.out.println("2");
 		 }else {
 			if(row!=-1) {
 				result=dao.updateNum(spi1-1, row+1);
@@ -940,8 +838,24 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener{
 				}
 				refresh();
 			}
+			 System.out.println("3");
 		 }//eles
 	
 	}//side
+	
+	///////////////// 시그니처 //////////////////////
+	
+	@Override
+	public void itemStateChanged(ItemEvent e) { //시그니처 
+		JCheckBox check=(JCheckBox) e.getItem();
+		
+		for(int i=0;i<9;i++) {
+			if(chkmake[i].isSelected()) { //선택되면 => 이미지
+				lblmake[i].setIcon(new ImageIcon(OrderMain.class.getResource("/imgSig/"+bgName[i]+".png")));
+			}else {
+				lblmake[i].setIcon(null);
+			}
+		}
+	}//end item
 
 }
