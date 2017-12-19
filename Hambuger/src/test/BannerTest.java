@@ -40,6 +40,7 @@ public class BannerTest implements ActionListener{
 					new BannerTest();
 				} catch (Exception e) {
 					e.printStackTrace();
+					System.out.println("");
 				}
 			}
 		});
