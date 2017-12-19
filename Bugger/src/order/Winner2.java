@@ -137,7 +137,7 @@ public class Winner2 extends JDialog implements ActionListener{
 	
 	//사진이 시간지나면 바뀌는 스레드에 넘겨줄 P주는 메소드 구현
 	public void start(int P) {
-		String[] picture= {"mPC_1\",\"PC_2\",\"PC_3\",\"PC_4\",\"PC_5"};
+		String[] picture= {"PC_1","PC_2","PC_3","PC_4","PC_5"};
 		lbl.setIcon(new ImageIcon(Winner2.class.getResource("/burger/"+picture[P]+".jpg")));
 		btn[P].setSelected(true);;
 	}

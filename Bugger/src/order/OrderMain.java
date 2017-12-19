@@ -75,7 +75,7 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener, 
 	//시그 재료 총합
 	private int sigsum=3000;
 	private JButton button_2;
-	private int num=1;//시그이름숫자 증가
+	private int num1=1;//시그이름숫자 증가
 	
 //------------- DB -------------------------------------
 	
@@ -95,9 +95,8 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener, 
 	public JRadioButton rabtn[];	//라디오 버튼
 	private JLabel lblNewLabel_2;		//사진을 붙일 라벨
 	private int P;	//일정 시간마다 사진을 변경하기 위함
-	private int num2=0;	//일정 시간을 재기 위함
-	
-	private JLabel NewAmazingLabel;	//서브프레임에 띄울 사진을 붙일 라벨
+	private int num=0; //시간을 재기 위한 함수
+	//private JLabel NewAmazingLabel;	//서브프레임에 띄울 사진을 붙일 라벨
 	
 	public String[] picture= {"m_1","m_2","m_3","m_4","m_5"};
 		
@@ -436,8 +435,9 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener, 
 						//이미지 띄우기 효과
 						System.out.println("p값 "+P+"==========================");
 						lbl.setIcon(new ImageIcon(Winner2.class.getResource("/burger/"+win2.winner[P]+".jpg")));
+						
 						//버튼 클릭 효과
-						win2.btn[i].setSelected(true);
+						win2.start(P);
 					}
 				}
 				/*//이미지 띄우기 효과
@@ -585,32 +585,26 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener, 
 			for(OrderVO list : vec) { 
 				str[k]=list.getMenu(); //전체검색으로 나오는 모든 메뉴들을 배열에 저장
 				k++; //배열번호 증가
-				
-				if(list.getMenu().indexOf("세트")!=-1) {//세트 햄버거 개수
-					H+=list.getNum();
-					break;
-				}else {
-					H=0;
-				}
 			}
 			
 			for(int i=row; i<vec.size(); i++) { //삭제한 번호를 기준으로 DB의 끝까지
-				dao.updateNo(i+1, str[i]); //DB의 번호를 차례로 바꿔나가기
+				result=dao.updateNo(i+1, str[i]); //DB의 번호를 차례로 바꿔나가기
 			}
 			
-			//햄버거 세트가 주문메뉴에 없을 때 세트의 음료나 사이드도 같이 없애기
+		/*	//햄버거 세트가 주문메뉴에 없을 때 세트의 음료나 사이드도 같이 없애기
 			if(H==0){
+				vec=dao.selectAll();
 				for(OrderVO list : vec) {
-					vec=dao.selectAll();
 					for(int i=0; i<vec.size(); i++) {
 						if(vec.get(i).getMenu().indexOf("S")!=-1) { //(S)는 세트의 음료나 사이드라는 뜻.
 							dao.delete(i+1);
+							System.out.println(vec.get(i).getMenu());
+							System.out.println(H);
 						}
 					}
 				}
 				change("Pset");
-			}
-			
+			}*/
 			
 			sideNum();
 			refresh(); //바뀐내용을 갱신
@@ -646,11 +640,11 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener, 
 			vec=dao.selectAll();
 			
 			vo.setNo(vec.size()+1);//사이즈 번호
-			vo.setMenu("시그니처"+num);
+			vo.setMenu("시그니처"+num1);
 			vo.setPrice(Integer.parseInt(textField_1.getText()));
 			vo.setNum(1);
 			dao.insert(vo);
-			num++;
+			num1++;
 			//이전에 선택된거 해제
 			for(int i=0; i<9; i++)
 			lblmake[i].setIcon(null);
@@ -667,7 +661,7 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener, 
 			if(obj==rabtn[i]) {//해당 라디오 버튼이 클릭 되었을 경우
 				lblNewLabel_2.setIcon(new ImageIcon(OrderMain.class.getResource("/burger/"+picture[i]+".jpg"))); //그에 해당하는 사진 붙이기
 				P=i; //특정 시간이 되면 다음으로 변경하기 위해  현재의 사진이 무엇인지 저장.
-				num2=0;
+				num=0;
 			}
 		}
 		
@@ -683,22 +677,22 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener, 
 		vec=dao.selectAll();
 		
 		if(obj==lblset1) {
-			click(0,"와퍼 주니어 세트",5000);
+			click(0,"햄버거 세트1",5000);
 			
 		}else if(obj==lblset2) {
-			click(1,"치즈 와퍼 주니어 세트",5500);
+			click(1,"햄버거 세트2",5500);
 			
 		}else if(obj==lblset3) {
-			click(2,"불고기 치즈 와퍼 세트",4000);
+			click(2,"햄버거 세트3",4000);
 			
 		}else if(obj==lblset4) {
-			click(3,"롱 치킨 버거 세트",3500);
+			click(3,"햄버거 세트4",3500);
 			
 		}else if(obj==lblset5) {
-			click(4,"치즈 버거 세트",5003);
+			click(4,"햄버거 세트5",5003);
 			
 		}else if(obj==lblset6) {
-			click(5,"불고기 버거 세트",1324);
+			click(5,"햄버거 세트6",1324);
 		}
 		
 	}
@@ -816,7 +810,7 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener, 
 					}
 					
 					vec=dao.selectAll();
-					String[] str1= {"햄버거 세트1","햄버거 세트2","햄버거 세트3","햄버거 세트4"};
+					String[] str1= {"햄버거 세트1","햄버거 세트2","햄버거 세트3","햄버거 세트4","햄버거 세트5","햄버거 세트6"};
 					for(int i=0; i<vec.size(); i++) {
 						for(int j=0; j<str1.length; j++) {
 							if(vec.get(i).getMenu().equals(str1[j])) {
@@ -825,9 +819,13 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener, 
 							}
 						}
 					}
-					
-				//////////////////////////////////////////////////////////////////////////////
 				
+				///////////////////// 세트메뉴 종합 삭제 ///////////////////////////////////////////////
+				
+					System.out.println(H);
+					
+				///////////////////////////////////////////////////////////////////////////
+					
 					if(table.getSelectedRow()==-1) {
 						spinner.setValue(1);
 						spinner.setEnabled(false);
@@ -919,7 +917,19 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener, 
 		///////////// 음료 //////////////////////
 		}else if(H<B && H!=0) {
 			side(sBeverage, row, "음료");
-		}//if
+		}else if(H==0) {
+			vec=dao.selectAll();
+			if(vec.size()!=0) {
+				for(OrderVO list : vec) {
+					for(int i=0; i<vec.size(); i++) {
+						if(vec.get(i).getMenu().indexOf("S")!=-1) { //(S)는 세트의 음료나 사이드라는 뜻.
+							dao.delete(i+1);
+						}
+					}
+				}
+				change("Pset");
+			}
+		}
 		
 	}//sideNum
 	
@@ -993,7 +1003,8 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener, 
 			}
 			 
 		 }//eles
-	
+		 
+		 JOptionPane.showMessageDialog(contentPane, "세트보다 많은 "+sBS+"를 주문하실 수 없습니다.");
 	}//side
 	
 	///////////////// 시그니처 //////////////////////
@@ -1035,7 +1046,7 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener, 
 			Calendar cal=Calendar.getInstance();
 			String sec=null;
 			String[] picture= {"m_1","m_2","m_3","m_4","m_5"};	//사진이름
-			int i=0;
+			
 			while(true) {	//계속 돌림-슬라이드쇼
 				try {
 					cal=Calendar.getInstance();
@@ -1050,19 +1061,17 @@ public class OrderMain extends JFrame implements ActionListener, MouseListener, 
 				num++; //1초가 지나면 num++
 				
 				if(num%5==0) { //5초가 지났을 경우
-					
-					if(i<5) {						
-						lblNewLabel_2.setIcon(new ImageIcon(OrderMain.class.getResource("/burger/"+picture[i]+".jpg"))); //다음 사진 라벨에 붙이기
-						rabtn[i].setSelected(true);//버튼도 같이 다음으로 이동
-					}else {
-						i=0;
-						lblNewLabel_2.setIcon(new ImageIcon(OrderMain.class.getResource("/burger/"+picture[i]+".jpg"))); //다음 사진 라벨에 붙이기
-						rabtn[i].setSelected(true);//버튼도 같이 다음으로 이동
+					if(P<5) {						
+						P++;
+						
+						if(P==5) {
+							P=0;
+						}
+						
+						lblNewLabel_2.setIcon(new ImageIcon(OrderMain.class.getResource("/burger/"+picture[P]+".jpg"))); //다음 사진 라벨에 붙이기
+						rabtn[P].setSelected(true);//버튼도 같이 다음으로 이동						
 					}
-					i++;
-					
 				}
-		
 		
 			}//while
 		}//run
