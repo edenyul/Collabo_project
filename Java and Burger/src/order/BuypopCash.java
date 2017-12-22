@@ -1,0 +1,255 @@
+package order;
+
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
+import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.SwingConstants;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Vector;
+import java.awt.Color;
+import javax.swing.JTextField;
+
+public class BuypopCash extends JDialog implements ActionListener{
+
+	private final JPanel contentPanel = new JPanel();
+	private JTable table;
+	public DefaultTableModel model; //표를 담기 위한 모델
+	private JButton okButton, cancelButton;
+	public boolean sayme; //클릭 상태 알기
+	
+	//-------- 금액 비교 하기 ----------------------
+	private int all=0, how=0;
+	
+	
+//------------- DB -------------------------------------
+	
+		private OrderDAO dao=new OrderDAO();
+		private OrderVO vo=new OrderVO();
+		private Vector<OrderVO> vec=new Vector<>();
+		private Vector<String> str=new Vector<>();
+		private int result=0;
+		
+		private int[] a=new int[6]; //테이블 번호
+		private int[] b=new int[6]; //선택 메뉴의 개수
+		private int[] set=new int[6];
+		private int H;
+		private JTextField txtgive;
+		
+	/**
+	 * Launch the application.
+	 */
+	/*public static void main(String[] args) {
+		try {
+			BuypopCash dialog = new BuypopCash();
+			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+			dialog.setVisible(true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}*/
+
+	/**
+	 * Create the dialog.
+	 */
+	public BuypopCash() {
+		setBounds(100, 100, 450, 300);
+		getContentPane().setLayout(new BorderLayout());
+		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		getContentPane().add(contentPanel, BorderLayout.CENTER);
+		contentPanel.setLayout(new BorderLayout(0, 0));
+		{
+			JScrollPane scrollPane = new JScrollPane();
+			contentPanel.add(scrollPane, BorderLayout.CENTER);
+			{
+				table = new JTable();
+				String[] name= {"메뉴","가격","개수"};
+				model=new DefaultTableModel(name,0);
+				table.setModel(model);
+				vec=dao.selectAll();
+				
+				//테이블을 가운데 정렬시키기 위한 소스코드
+				DefaultTableCellRenderer render=new DefaultTableCellRenderer();
+				render.setHorizontalAlignment(SwingConstants.CENTER);
+				TableColumnModel colum=table.getColumnModel();
+				for(int i=0; i<colum.getColumnCount(); i++) {
+					colum.getColumn(i).setCellRenderer(render);
+				}
+				
+				scrollPane.setViewportView(table);
+			}
+		}
+		{
+			JPanel panel = new JPanel();
+			contentPanel.add(panel, BorderLayout.NORTH);
+			panel.setLayout(new BorderLayout(0, 0));
+			{
+				JPanel panel_1 = new JPanel();
+				panel.add(panel_1, BorderLayout.NORTH);
+				{
+					JLabel lblNewLabel = new JLabel("\uC8FC\uBB38 \uB9AC\uC2A4\uD2B8\uB97C ");
+					panel_1.add(lblNewLabel);
+					lblNewLabel.setFont(new Font("굴림", Font.BOLD, 16));
+				}
+				{
+					JLabel lblNewLabel_1 = new JLabel("\uD655\uC778");
+					panel_1.add(lblNewLabel_1);
+					lblNewLabel_1.setForeground(Color.RED);
+					lblNewLabel_1.setFont(new Font("굴림", Font.BOLD, 18));
+				}
+				{
+					JLabel lblNewLabel_2 = new JLabel("\uD574 \uC8FC\uC138\uC694.");
+					panel_1.add(lblNewLabel_2);
+					lblNewLabel_2.setFont(new Font("굴림", Font.BOLD, 16));
+				}
+			}
+			{
+				JPanel panel_1 = new JPanel();
+				panel.add(panel_1, BorderLayout.CENTER);
+				{
+					JLabel lblNewLabel_3 = new JLabel("\uC9C0\uAE09\uD55C \uB3C8 : ");
+					panel_1.add(lblNewLabel_3);
+				}
+				{
+					txtgive = new JTextField();
+					panel_1.add(txtgive);
+					txtgive.setColumns(10);
+				}
+				{
+					JLabel lblNewLabel_4 = new JLabel("\uC6D0");
+					panel_1.add(lblNewLabel_4);
+				}
+			}
+		}
+		{
+			JPanel buttonPane = new JPanel();
+			buttonPane.setLayout(new FlowLayout(FlowLayout.CENTER));
+			getContentPane().add(buttonPane, BorderLayout.SOUTH);
+			{
+				okButton = new JButton("\uD655\uC778");
+				okButton.setActionCommand("OK");
+				buttonPane.add(okButton);
+				getRootPane().setDefaultButton(okButton);
+			}
+			{
+				cancelButton = new JButton("\uCDE8\uC18C");
+				cancelButton.setActionCommand("Cancel");
+				buttonPane.add(cancelButton);
+			}
+		}
+		
+		
+		okButton.addActionListener(this);
+		cancelButton.addActionListener(this);
+		
+		Vector<Object> obj;
+		//vector가 가지고 있는 데이터 jtable에 보여주기
+		for(OrderVO list : vec) {
+			obj=new Vector<>();
+			
+			obj.addElement(list.getMenu());
+			obj.addElement(list.getPrice());
+			obj.addElement(list.getNum());
+			
+			model.addRow(obj);
+		}		
+		
+	}//end 생성자
+	
+	
+	
+	public void actionPerformed(ActionEvent e) {
+		JButton btn = (JButton) e.getSource();
+	
+		//입력 받은 금액
+		if(btn==okButton) { //결제하면
+			how=Integer.parseInt(txtgive.getText());
+			all=dao.allprice();
+		
+			if( all>how || how%10!=0 || (how-all)<0 ) {
+				JOptionPane.showMessageDialog(this, "입력한 금액을 다시 확인하세요.\n(지폐만 가능합니다.)","결제 확인 요청",JOptionPane.QUESTION_MESSAGE,null);
+			}else {
+				int leftm=0;
+				leftm=how-all;
+				dao.deleteAll();
+				refresh();
+				sayme=true;
+				say();
+				JOptionPane.showConfirmDialog(this, "결제 완료\n거스름돈 : "+leftm+"원 입니다.", "결제 완료", JOptionPane.CLOSED_OPTION, JOptionPane.INFORMATION_MESSAGE);
+				//JFrame main=getMainF();
+				MemberLoginTest login=new MemberLoginTest();
+				
+				dispose();
+				login.order.setVisible(false);
+				
+				login.setVisible(true);
+				
+				
+			}
+		}else { //취소하면			
+			refresh();
+			dispose();
+			sayme=false;
+			say();
+			}
+	}//end actionPerformed
+	
+	public boolean say() { //버튼 현재 상태 알림
+		return sayme;
+		
+	}
+	
+//////////////테이블 DB관련 란////////////////////
+	
+
+	//테이블 다시 출력
+	public void refresh() {
+		Vector<Object> obj;
+		vec=dao.selectAll();
+		
+		table.removeAll();
+		
+		String columnNames[]= {"번호","메뉴","가격","개수"};
+		model = new DefaultTableModel(columnNames, 0);
+		table.setModel(model);
+		
+		//vector가 가지고 있는 데이터 jtable에 보여주기
+		for(OrderVO list : vec) {
+			obj=new Vector<>();
+			
+			obj.addElement(list.getNo());
+			obj.addElement(list.getMenu());
+			obj.addElement(list.getPrice());
+			obj.addElement(list.getNum());
+			
+			model.addRow(obj);
+		}
+	
+		table.getTableHeader().setReorderingAllowed(false); //컬럼 이동 방지
+		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); //다중 선택 방지
+		
+		//테이블을 가운데 정렬시키기 위한 소스코드
+		DefaultTableCellRenderer render=new DefaultTableCellRenderer();
+		render.setHorizontalAlignment(SwingConstants.CENTER);
+		TableColumnModel colum=table.getColumnModel();
+		for(int i=0; i<colum.getColumnCount(); i++) {
+			colum.getColumn(i).setCellRenderer(render);
+		}
+		
+	}//refresh();
+}
